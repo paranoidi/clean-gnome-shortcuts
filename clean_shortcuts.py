@@ -11,13 +11,19 @@ WHITELIST = (
 )
 
 
-def main():
-    result = subprocess.run(['gsettings', 'list-keys', 'org.gnome.desktop.wm.keybindings'],
+NAMESPACES = [
+    'org.cinnamon.desktop.keybindings.wm',
+    'org.gnome.desktop.wm.keybindings',
+]
+
+
+def clean(namespace):
+    result = subprocess.run(['gsettings', 'list-keys', namespace],
                             capture_output=True, universal_newlines=True)
     for keybindings_key in result.stdout.split('\n'):
         if not keybindings_key:
             continue
-        result = subprocess.run(['gsettings', 'get', 'org.gnome.desktop.wm.keybindings', keybindings_key],
+        result = subprocess.run(['gsettings', 'get', namespace, keybindings_key],
                                 capture_output=True, universal_newlines=True)
 
         if result.stdout.startswith('@as '):
@@ -38,16 +44,21 @@ def main():
                     print(f'.. removed {keybind}')
 
             # set keybindings
-            result = subprocess.run(['gsettings', 'set', 'org.gnome.desktop.wm.keybindings',
+            result = subprocess.run(['gsettings', 'set', namespace,
                                      keybindings_key, str(keybindings)],
                                     capture_output=True, universal_newlines=True)
 
         # default flag is set so maybe we need to remove that and set empty to get rid of
         # potential crap
         if default and not keybindings:
-            result = subprocess.run(['gsettings', 'set', 'org.gnome.desktop.wm.keybindings',
+            result = subprocess.run(['gsettings', 'set', namespace,
                                      keybindings_key, '[]'],
                                     capture_output=True, universal_newlines=True)
+
+
+def main():
+    for name in NAMESPACES:
+        clean(name)
 
 
 if __name__ == "__main__":
