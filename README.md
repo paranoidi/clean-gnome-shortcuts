@@ -6,3 +6,7 @@ Clear all offending keyboard shortcuts. This will leave all super-key related bi
 and basic window shortcuts (ALT-Tab, Shift-ALT-Tab, ALT-F4, Alt Space).
 
 Requires Python 3.7+
+
+# Deprecated, superceded by
+
+https://github.com/paranoidi/minty-shortcuts
